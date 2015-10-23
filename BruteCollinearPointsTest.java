@@ -57,5 +57,7 @@ public class BruteCollinearPointsTest {
 		assertEquals("Should have one line segments",lsa[0].toString() , bcp.segments()[0].toString());
 		assertEquals("Should have one line segments",lsa[1].toString() , bcp.segments()[1].toString());
 	}
+	
+	//TODO test error throwing.
 
 }
