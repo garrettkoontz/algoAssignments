@@ -22,14 +22,14 @@ public class BruteCollinearPoints {
 				}
 			}
 		}
-		this.pts = points;
+		this.pts = Arrays.copyOf(points,points.length);
 		this.findSegments();
 		// finds all line segments containing 4 points
 	}
 
 	private void findSegments() {
 		Arrays.sort(pts);
-		LineSegment[] segs = new LineSegment[pts.length - 3];
+		LineSegment[] segs = new LineSegment[pts.length];
 		int cnt = 0;
 		for (int i = 0; i < pts.length; i++) {
 			for (int j = i + 1; j < pts.length; j++) {
@@ -53,7 +53,7 @@ public class BruteCollinearPoints {
 	}
 
 	public LineSegment[] segments() {
-		return segments;
+		return Arrays.copyOf(segments, segments.length);
 		// the line segments
 	}
 

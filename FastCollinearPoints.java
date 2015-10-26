@@ -1,4 +1,8 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FastCollinearPoints {
 
@@ -20,24 +24,50 @@ public class FastCollinearPoints {
 				}
 			}
 		}
-		this.pts = points;
+		this.pts = Arrays.copyOf(points,points.length);
 		this.findSegments();
 		// finds all line segments containing 4 points
 	}
 
 	private void findSegments() {
-		Arrays.sort(pts);
-		LineSegment[] segs = new LineSegment[pts.length - 3];
+		Point[] localPts = Arrays.copyOf(pts, pts.length);
+		List<LineSegment> segs = new ArrayList<LineSegment>();
 		int cnt = 0;
-		for (int i = 0; i < pts.length; i++) {
-			double[] slopes = new double[pts.length - i - 1];
-			for (int j = i + 1; j < pts.length; j++) {
-				slopes[j-i-1] = pts[i].slopeTo(pts[j]);
+		while (localPts.length > 3) {
+			Point thisI = localPts[0];
+			Arrays.sort(localPts, thisI.slopeOrder());
+			int length = 0;
+			for (int j = 0; j < localPts.length - 1; j++) {
+				boolean same = thisI.slopeTo(localPts[j]) == thisI
+						.slopeTo(localPts[j + 1]);
+				if ((length > 1 && !same)) {
+					addToList(localPts, j, length, thisI, segs, cnt++);
+					length = 0;
+				} else if (length > 0 && same && j == (localPts.length - 2)) {
+					addToList(localPts, ++j, ++length, thisI, segs, cnt++);
+				} else if (same) {
+					length++;
+				} else {
+					length = 0;
+				}
+
 			}
+			localPts = Arrays.copyOfRange(localPts, 1, localPts.length);
 		}
 		numSegments = cnt;
-		segments =  Arrays.copyOfRange(segs, 0, cnt);
-		segs = null;
+		segments = segs.toArray(new LineSegment[0]);
+	}
+
+	private void addToList(Point[] localPts, int j, int length, Point thisI,
+		List<LineSegment> segs, int cnt) {
+		Point[] allEqual = Arrays.copyOf(
+				Arrays.copyOfRange(localPts, j - length, j + 1), length + 2);
+		allEqual[length + 1] = thisI;
+		Arrays.sort(allEqual);
+		if(allEqual.length - 1 == 100){
+			System.out.println("At 100.");
+		}
+		segs.add( new LineSegment(allEqual[0],allEqual[allEqual.length - 1]));
 	}
 
 	public int numberOfSegments() {
@@ -46,7 +76,7 @@ public class FastCollinearPoints {
 	}
 
 	public LineSegment[] segments() {
-		return segments;
+		return Arrays.copyOf(segments, segments.length);
 		// the line segments
 	}
 }
