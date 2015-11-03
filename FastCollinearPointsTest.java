@@ -36,6 +36,22 @@ public class FastCollinearPointsTest {
 		assertEquals("Should have one line segments",lsa[0].toString() , bcp.segments()[0].toString());
 	}
 	
+	
+	@Test
+	public void testBruteCollinearPointsOneMoreThan4() {
+		
+		Point[] testArray = new Point[5000];
+		for(int i = 0; i < 5000; i++){
+			testArray[i] = new Point(i,i);
+		}
+		LineSegment[] lsa = new LineSegment[1];
+		LineSegment ls = new LineSegment(testArray[0],testArray[4999]);
+		lsa[0] = ls;
+		FastCollinearPoints bcp = new FastCollinearPoints(testArray);
+		assertSame("Should have one segments",1, bcp.numberOfSegments());
+		assertEquals("Should have one line segments",lsa[0].toString() , bcp.segments()[0].toString());
+	}
+	
 	@Test
 	public void testBruteCollinearPointsEdge() {
 		Point[] testArray = new Point[4];

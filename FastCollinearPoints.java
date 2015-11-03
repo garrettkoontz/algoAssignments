@@ -24,15 +24,38 @@ public class FastCollinearPoints {
 				}
 			}
 		}
-		this.pts = Arrays.copyOf(points,points.length);
+		this.pts = Arrays.copyOf(points, points.length);
 		this.findSegments();
 		// finds all line segments containing 4 points
+	}
+
+	private class SegmentsHolder {
+		private List<Point> segPts;
+
+		public SegmentsHolder(Point... points) {
+			this.segPts = Arrays.asList(points);
+		}
+
+		public List<Point> getPoints() {
+			return segPts;
+		}
+
+		public boolean equals(SegmentsHolder that) {
+			if (this.segPts.containsAll(that.segPts)
+					|| that.segPts.containsAll(this.segPts)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 	}
 
 	private void findSegments() {
 		Point[] localPts = Arrays.copyOf(pts, pts.length);
 		List<LineSegment> segs = new ArrayList<LineSegment>();
 		int cnt = 0;
+		Set<SegmentsHolder> sis = new HashSet<SegmentsHolder>();
 		while (localPts.length > 3) {
 			Point thisI = localPts[0];
 			Arrays.sort(localPts, thisI.slopeOrder());
@@ -41,10 +64,10 @@ public class FastCollinearPoints {
 				boolean same = thisI.slopeTo(localPts[j]) == thisI
 						.slopeTo(localPts[j + 1]);
 				if ((length > 1 && !same)) {
-					addToList(localPts, j, length, thisI, segs, cnt++);
+					cnt += addToList(localPts, j, length, thisI, segs, cnt);
 					length = 0;
 				} else if (length > 0 && same && j == (localPts.length - 2)) {
-					addToList(localPts, ++j, ++length, thisI, segs, cnt++);
+					cnt += addToList(localPts, ++j, ++length, thisI, segs, cnt);
 				} else if (same) {
 					length++;
 				} else {
@@ -58,16 +81,16 @@ public class FastCollinearPoints {
 		segments = segs.toArray(new LineSegment[0]);
 	}
 
-	private void addToList(Point[] localPts, int j, int length, Point thisI,
-		List<LineSegment> segs, int cnt) {
+	private int addToList(Point[] localPts, int j, int length, Point thisI,
+			List<LineSegment> segs, int cnt) {
 		Point[] allEqual = Arrays.copyOf(
 				Arrays.copyOfRange(localPts, j - length, j + 1), length + 2);
 		allEqual[length + 1] = thisI;
 		Arrays.sort(allEqual);
-		if(allEqual.length - 1 == 100){
-			System.out.println("At 100.");
-		}
-		segs.add( new LineSegment(allEqual[0],allEqual[allEqual.length - 1]));
+		SegmentsHolder thissh = new SegmentsHolder(allEqual);
+		segs.add(new LineSegment(allEqual[0], allEqual[allEqual.length - 1]));
+		return 1;
+
 	}
 
 	public int numberOfSegments() {

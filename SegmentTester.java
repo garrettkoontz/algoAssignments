@@ -6,7 +6,7 @@ import edu.princeton.cs.algs4.StdOut;
 public class SegmentTester {
 
 	public static void main(String[] args) {
-		String input = "/Users/garrett/algoAssigments2/src/collinear/input10.txt";
+		String input = "C:/Users/gkoontz/workspace/algoAssignments/src/collinear/equidistant.txt";
 	    // read the N points from a file
 //	    In in = new In(args[0]);
 		In in = new In(input);
